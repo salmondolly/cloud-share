@@ -1,0 +1,56 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: cloud-share-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-cloud_share}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+    container_name: cloud-share-backend
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/${MONGO_DATABASE:-cloud_share}
+      JWT_SECRET: ${JWT_SECRET:?Create a .env file and set JWT_SECRET}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+      FRONTEND_BASE_URL: ${FRONTEND_BASE_URL:-http://localhost:5173}
+      UPLOAD_DIR: /app/uploads
+      PREMIUM_PRICE_PAISE: ${PREMIUM_PRICE_PAISE:-49900}
+      ULTIMATE_PRICE_PAISE: ${ULTIMATE_PRICE_PAISE:-99900}
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+    container_name: cloud-share-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+  uploads_data:

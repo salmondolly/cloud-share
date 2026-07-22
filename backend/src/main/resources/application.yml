@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: cloud-share-backend
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/cloud_share}
+      auto-index-creation: true
+  servlet:
+    multipart:
+      max-file-size: ${SERVER_MAX_FILE_SIZE:500MB}
+      max-request-size: ${SERVER_MAX_REQUEST_SIZE:501MB}
+  jackson:
+    time-zone: UTC
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
+  storage:
+    upload-dir: ${UPLOAD_DIR:uploads}
+  razorpay:
+    key-id: ${RAZORPAY_KEY_ID:}
+    key-secret: ${RAZORPAY_KEY_SECRET:}
+  plans:
+    premium-price-paise: ${PREMIUM_PRICE_PAISE:49900}
+    ultimate-price-paise: ${ULTIMATE_PRICE_PAISE:99900}
