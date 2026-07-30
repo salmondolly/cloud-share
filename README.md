@@ -488,20 +488,6 @@ curl -X PATCH http://localhost:8080/api/files/FILE_ID/visibility \
   -d '{"visibility":"PUBLIC"}'
 ```
 
-## Screenshots
-
-Add real screenshots after running the application. Suggested files:
-
-```text
-docs/screenshots/login.png
-docs/screenshots/dashboard.png
-docs/screenshots/my-files.png
-docs/screenshots/plans.png
-docs/screenshots/public-share.png
-```
-
-Do not add screenshots containing JWTs, Razorpay secrets, private files, personal email addresses, or browser developer-tool request headers.
-
 ## Future improvements
 
 - S3, Cloudflare R2, Azure Blob Storage, or Google Cloud Storage adapter
